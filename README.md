@@ -71,7 +71,7 @@ sequenceDiagram
 
 1. 發送者及接收者各自開啓橋接程式。
   ```bash
-  zenoh-bridge-ros2dds
+  zenoh-bridge-ros2dds peer
   ```
 
 2. 發送者啓動 ROS talker。
@@ -109,13 +109,13 @@ sequenceDiagram
 接收者啓動時添加 -l 參數、使其在 TCP 7447 埠口準備接收外來連線。
 
 ```bash
-zenoh-bridge-ros2dds -l tcp/192.168.200:7447
+zenoh-bridge-ros2dds peer -l tcp/192.168.200:7447
 ```
 
 發送者啓動時添加 -e 參數、使其在啓動時主動連接接收者的 TCP 7447 埠口。
 
 ```bash
-zenoh-bridge-ros2dds -e tcp/192.168.200:7447
+zenoh-bridge-ros2dds peer -e tcp/192.168.200:7447
 ```
 
 上述步驟的目的是讓發送者透過 IP 主動連結接收者，如此一來，兩邊的 ROS
@@ -165,7 +165,7 @@ zenohd -l tcp/192.168.3.300:7447
 發送者、接收者啓動橋接程式時，都主動連接 zenohd。
 
 ```bash
-zenoh-bridge-ros2dds -e tcp/192.168.3.300:7447
+zenoh-bridge-ros2dds peer -e tcp/192.168.3.300:7447
 ```
 
 後續 ROS talker/listener 流程相同。
@@ -182,9 +182,9 @@ Zenoh 除了提供跨網域傳輸能力，它還有提供數個自訂化的選�
 Zenoh 支援 UDP、TLS、QUIC等協定，這些選項都可套用在 zenohd 及所有的 zenoh-bridge-* 的套件。
 
 ```bash
-zenoh-bridge-ros2dds -e udp/192.168.1.100:7447
-zenoh-bridge-ros2dds -e tls/192.168.1.100:7447
-zenoh-bridge-ros2dds -e quic/192.168.1.100:7447
+zenoh-bridge-ros2dds peer -e udp/192.168.1.100:7447
+zenoh-bridge-ros2dds peer -e tls/192.168.1.100:7447
+zenoh-bridge-ros2dds peer -e quic/192.168.1.100:7447
 ```
 
 ### 更多類型的橋接
@@ -198,23 +198,23 @@ sudo apt install zenoh-bridge-mqtt
 sudo apt install zenoh-bridge-ros1
 ```
 
-### 綁定 ROS Namespace
+### 綁定 ROS 域名
 
 當情況是兩臺電腦執行同樣一組 ROS 程式，而有兩邊 ROS topic 有撞名的風險，
 解決方式是可以在兩邊設定不同的 namespace 來避免撞名。下面範例我們假設
 兩臺電腦都是車子，分別命名爲 car1 及 car2，兩者都有一個同名的 topic 是
 camera。
 
-第一臺車綁定 car1 namespace。
+第一臺車綁定 car1 域名。
 
 ```bash
-zenoh-bridge-ros2dds -n car1
+zenoh-bridge-ros2dds peer -n car1
 ```
 
-第二臺車綁定 car2 namespace。
+第二臺車綁定 car2 域名。
 
 ```bash
-zenoh-bridge-ros2dds -n car2
+zenoh-bridge-ros2dds peer -n car2
 ```
 
 如此一來，car1 及 car2 的 topic 在 Zenoh 網路轉送時，分別被重新命名爲
@@ -232,5 +232,5 @@ ros2 run demo_nodes_cpp talker
 爲了讓橋接程式可以正確偵查到特定 ROS domain，必須添加對應的參數。
 
 ```bash
-zenoh-bridge-ros2dds -d 7
+zenoh-bridge-ros2dds peer -d 7
 ```
